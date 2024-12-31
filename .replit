@@ -1,4 +1,4 @@
-modules = ["python-3.12"]
+modules = ["python-3.10", "nix"]
 run = """
 poetry install
 poetry run python main.py
@@ -15,7 +15,10 @@ POETRY_HOME = "${HOME}/.local/share/pypoetry"
 PATH = "${HOME}/.local/share/pypoetry/bin:${PATH}"
 
 [deployment]
-run = ["sh", "-c", "poetry install && poetry run python main.py"]
+run = ["sh", "-c", """
+poetry install
+poetry run python main.py
+"""]
 deploymentTarget = "gce"
 ignorePorts = true
 
