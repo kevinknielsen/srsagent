@@ -144,11 +144,11 @@ class FarcasterConnection(BaseConnection):
             if response.lower() != 'y':
                 return True
 
-        print("\n📝 To get your Farcaster (Warpcast) recovery phrase (for connection):")
-        print("1. Open the Warpcast mobile app")
-        print("2. Navigate to Settings page (click profile picture on top left, then the gear icon on top right)")
-        print("3. Click 'Advanced' then 'Reveal recovery phrase'")
-        print("4. Copy your recovery phrase")
+        logger.info("\n📝 To get your Farcaster (Warpcast) recovery phrase (for connection):")
+        logger.info("1. Open the Warpcast mobile app")
+        logger.info("2. Navigate to Settings page (click profile picture on top left, then the gear icon on top right)")
+        logger.info("3. Click 'Advanced' then 'Reveal recovery phrase'")
+        logger.info("4. Copy your recovery phrase")
 
         recovery_phrase = input("\nEnter your Farcaster (Warpcast) recovery phrase: ")
 

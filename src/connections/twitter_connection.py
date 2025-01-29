@@ -3,7 +3,6 @@ import logging
 from typing import Dict, Any, List, Tuple
 from requests_oauthlib import OAuth1Session
 from dotenv import set_key, load_dotenv
-import tweepy
 from src.connections.base_connection import BaseConnection, Action, ActionParameter
 from src.helpers import print_h_bar
 
@@ -53,7 +52,7 @@ class TwitterConnection(BaseConnection):
                 name="get-latest-tweets",
                 parameters=[
                     ActionParameter("username", True, str, "Twitter username to get tweets from"),
-                    ActionParameter("count", True, int, "Number of tweets to retrieve")
+                    ActionParameter("count", False, int, "Number of tweets to retrieve")
                 ],
                 description="Get the latest tweets from a user"
             ),
@@ -327,16 +326,11 @@ class TwitterConnection(BaseConnection):
         """Check if Twitter credentials are configured and valid"""
         logger.debug("Checking Twitter configuration status")
         try:
-            credentials = self._get_credentials()
+            # check if credentials exist
+            self._get_credentials()
 
-            # Initialize client and validate credentials
-            client = tweepy.Client(
-                consumer_key=credentials['TWITTER_CONSUMER_KEY'],
-                consumer_secret=credentials['TWITTER_CONSUMER_SECRET'],
-                access_token=credentials['TWITTER_ACCESS_TOKEN'],
-                access_token_secret=credentials['TWITTER_ACCESS_TOKEN_SECRET'])
-
-            client.get_me()
+            # Test the configuration by making a simple API call
+            self._get_authenticated_user_info()
             logger.debug("Twitter configuration is valid")
             return True
 
@@ -426,16 +420,17 @@ class TwitterConnection(BaseConnection):
         params = {
             "tweet.fields": "created_at,text",
             "max_results": min(count, 100),
-            "exclude": "retweets,replies"
+            "query": f"from:{username} -is:retweet -is:reply"
         }
 
         response = self._make_request('get',
-                                      f"users/{credentials['TWITTER_USER_ID']}/tweets",
+                                      f"tweets/search/recent",
                                       params=params)
 
         tweets = response.get("data", [])
         logger.debug(f"Retrieved {len(tweets)} tweets")
         return tweets
+
 
     def post_tweet(self, message: str, **kwargs) -> dict:
         """Post a new tweet"""
